@@ -10,7 +10,7 @@
  */
 
 import invariant from 'fbjs/lib/invariant';
-import { render } from 'react-dom';
+import { render, hydrate } from 'react-dom';
 import AppContainer from './AppContainer';
 import StyleSheet from '../../apis/StyleSheet';
 import React from 'react';
@@ -18,16 +18,25 @@ import React from 'react';
 export default function renderApplication(
   RootComponent: ReactClass<Object>,
   initialProps: Object,
-  rootTag: any
+  rootTag: any,
+  hydrate: bool
 ) {
   invariant(rootTag, 'Expect to have a valid rootTag, instead got ', rootTag);
-
-  render(
-    <AppContainer rootTag={rootTag}>
-      <RootComponent {...initialProps} />
-    </AppContainer>,
-    rootTag
-  );
+  if (hydrate) {
+    hydrate(
+      <AppContainer rootTag={rootTag}>
+        <RootComponent {...initialProps} />
+      </AppContainer>,
+      rootTag
+    );
+  } else {
+    render(
+      <AppContainer rootTag={rootTag}>
+        <RootComponent {...initialProps} />
+      </AppContainer>,
+      rootTag
+    );
+  }
 }
 
 export function getApplication(RootComponent: ReactClass<Object>, initialProps: Object): Object {
